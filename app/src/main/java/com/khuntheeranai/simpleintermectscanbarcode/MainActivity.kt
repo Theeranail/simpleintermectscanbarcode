@@ -1,10 +1,12 @@
 package com.khuntheeranai.simpleintermectscanbarcode
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.pm.ActivityInfo
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.khuntheeranai.intermecbarcodereaderlib.BarcodeReaderEventListener
 import com.khuntheeranai.intermecbarcodereaderlib.BarcodeScanReader
 import com.khuntheeranai.intermecbarcodereaderlib.models.BarcodeModel
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), BarcodeReaderEventListener {
     private lateinit var barcodeScanReader: BarcodeScanReader
@@ -12,12 +14,30 @@ class MainActivity : AppCompatActivity(), BarcodeReaderEventListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        barcodeScanReader = BarcodeScanReader(this@MainActivity,this);
+
+        //set lock the orientation
+        //otherwise, the onDestory will trigger
+        //when orientation changes
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+
+        barcodeScanReader = BarcodeScanReader(this);
+        barcodeScanReader.barcodeReaderEventListener = this;
+
+        barcodeScanReader.startScan()
 
     }
 
     override fun barcodeReaderSuccess(barcodeModel: BarcodeModel) {
-        TODO("Not yet implemented")
+        runOnUiThread {
+            textViewLog.text = "barcode : => ${barcodeModel.barcodeData} \n"
+        }
+    }
+
+    override fun barcodeReaderFailed() {
+        runOnUiThread {
+            textViewError.text = "\n barcodeReaderFailed \n"
+        }
+
     }
 
     override fun onStop() {
