@@ -1,0 +1,3 @@
+rootProject.name='SimpleIntermectScanBarcode'
+include ':app', ':DataCollection'
+include ':intermecbarcodereaderlib'
